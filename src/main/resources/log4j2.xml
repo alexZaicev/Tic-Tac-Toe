@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration strict="true" name="XMLConfigTest" packages="org.apache.logging.log4j.test">
+    <Properties>
+        <Property name="logPath">./log</Property>
+        <Property name="logLevel">DEBUG</Property>
+        <Property name="appName">TicTacToe</Property>
+        <Property name="pattern">[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%c{1}] - %msg%n</Property>
+    </Properties>
+    <Appenders>
+        <Appender type="Console" name="STDOUT">
+            <Layout type="PatternLayout" pattern="${pattern}"/>
+        </Appender>
+        <RollingFile name="RollingFile" filePattern="${logPath}/${appName}-%d{yyyy-MM-dd}-%i.log.zip">
+            <PatternLayout>
+                <Pattern>${pattern}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy minSize="0"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+                <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apache.logging.log4j.core.appender.rolling" level="${logLevel}" additivity="true">
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+        <Root level="${logLevel}">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
