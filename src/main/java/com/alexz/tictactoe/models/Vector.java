@@ -1,6 +1,9 @@
 package com.alexz.tictactoe.models;
 
 import com.alexz.tictactoe.services.DoubleUtils;
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -8,15 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Vector implements Serializable {
+public class Vector implements Serializable, Cloneable {
 
   private final Map<Integer, Double> data = new HashMap<Integer, Double>();
   private int dimension;
   private double defaultValue;
   private int id = -1;
 
-  public Vector() {
-  }
+  public Vector() {}
 
   public Vector(double[] v) {
     for (int i = 0; i < v.length; ++i) {
@@ -38,21 +40,41 @@ public class Vector implements Serializable {
     }
   }
 
-  public Vector makeCopy() {
-    Vector clone = new Vector(dimension);
-    clone.copy(this);
-    return clone;
+  public Map<Integer, Double> getData() {
+    return data;
   }
 
-  public void copy(Vector rhs) {
-    defaultValue = rhs.defaultValue;
-    dimension = rhs.dimension;
-    id = rhs.id;
+  public int getDimension() {
+    return dimension;
+  }
 
-    data.clear();
-    for (Map.Entry<Integer, Double> entry : rhs.data.entrySet()) {
-      data.put(entry.getKey(), entry.getValue());
+  public void setDimension(int dimension) {
+    this.dimension = dimension;
+  }
+
+  public double getDefaultValue() {
+    return defaultValue;
+  }
+
+  public void setDefaultValue(double defaultValue) {
+    this.defaultValue = defaultValue;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public Vector clone() {
+    try {
+      super.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
     }
+    return SerializationUtils.clone(this);
   }
 
   public void set(int i, double value) {
@@ -68,44 +90,9 @@ public class Vector implements Serializable {
     return data.getOrDefault(i, defaultValue);
   }
 
-  @Override
-  public boolean equals(Object rhs) {
-    if (rhs != null && rhs instanceof Vector) {
-      Vector rhs2 = (Vector) rhs;
-      if (dimension != rhs2.dimension) {
-        return false;
-      }
-
-      if (data.size() != rhs2.data.size()) {
-        return false;
-      }
-
-      for (Integer index : data.keySet()) {
-        if (!rhs2.data.containsKey(index)) return false;
-        if (!DoubleUtils.equals(data.get(index), rhs2.data.get(index))) {
-          return false;
-        }
-      }
-
-      if (defaultValue != rhs2.defaultValue) {
-        for (int i = 0; i < dimension; ++i) {
-          if (data.containsKey(i)) {
-            return false;
-          }
-        }
-      }
-
-      return true;
-    }
-
-    return false;
-  }
-
   public void setAll(double value) {
     defaultValue = value;
-    for (Integer index : data.keySet()) {
-      data.put(index, defaultValue);
-    }
+    data.replaceAll((i, v) -> defaultValue);
   }
 
   public IndexValue indexWithMaxValue(Set<Integer> indices) {
@@ -198,7 +185,7 @@ public class Vector implements Serializable {
   }
 
   public Vector multiply(double rhs) {
-    Vector clone = this.makeCopy();
+    Vector clone = this.clone();
     for (Integer i : data.keySet()) {
       clone.data.put(i, rhs * data.get(i));
     }
@@ -315,5 +302,31 @@ public class Vector implements Serializable {
       clone.data.put(k, data.get(k) / norm);
     }
     return clone;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+
+    if (!(o instanceof Vector)) return false;
+
+    Vector vector = (Vector) o;
+
+    return new EqualsBuilder()
+        .append(getDimension(), vector.getDimension())
+        .append(getDefaultValue(), vector.getDefaultValue())
+        .append(getId(), vector.getId())
+        .append(getData(), vector.getData())
+        .isEquals();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37)
+        .append(getData())
+        .append(getDimension())
+        .append(getDefaultValue())
+        .append(getId())
+        .toHashCode();
   }
 }
