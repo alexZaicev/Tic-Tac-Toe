@@ -50,7 +50,6 @@
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
-
         <!--    Testing    -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

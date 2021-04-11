@@ -25,6 +25,9 @@ public enum ConfigKey {
     BOT_REWARD_NEGATIVE("bot.reward.negative"),
     BOT_REWARD_NEUTRAL("bot.reward.neutral"),
     BOT_Q_AGENT_EPISODES("bot.q_agent.episodes"),
+    BOT_Q_AGENT_ALPHA("bot.q_agent.alpha"),
+    BOT_Q_AGENT_DISCOUNT("bot.q_agent.discount"),
+    BOT_Q_AGENT_EPSILON("bot.q_agent.epsilon"),
     ;
 
     public final String name;

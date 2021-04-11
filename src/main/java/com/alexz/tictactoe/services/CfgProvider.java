@@ -84,6 +84,10 @@ public class CfgProvider extends ServiceBase {
     return Double.parseDouble(this.getStr(key));
   }
 
+  public float getFloat(final ConfigKey key) {
+    return Float.parseFloat(this.getStr(key));
+  }
+
   private Font parseFont(final String val) {
     Font font = null;
     if (StringUtils.isNotBlank(val)) {
